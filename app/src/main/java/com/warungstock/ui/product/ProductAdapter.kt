@@ -1,6 +1,5 @@
 package com.warungstock.ui.product
 
-import android.graphics.Color
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.core.content.ContextCompat
@@ -22,7 +21,9 @@ class ProductAdapter(
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
         val binding = ItemProductBinding.inflate(
-            LayoutInflater.from(parent.context), parent, false
+            LayoutInflater.from(parent.context),
+            parent,
+            false
         )
         return ViewHolder(binding)
     }
@@ -31,25 +32,39 @@ class ProductAdapter(
         holder.bind(getItem(position))
     }
 
-    inner class ViewHolder(private val binding: ItemProductBinding) :
-        RecyclerView.ViewHolder(binding.root) {
+    inner class ViewHolder(
+        private val binding: ItemProductBinding
+    ) : RecyclerView.ViewHolder(binding.root) {
 
         fun bind(product: Product) = with(binding) {
+
+            // BASIC INFO
             tvName.text = product.name
             tvCategory.text = product.category
+
+            // HARGA
             tvBuyPrice.text = "Beli: ${product.buyPrice.toRupiah()}"
             tvSellPrice.text = "Jual: ${product.sellPrice.toRupiah()}"
+
+            // STOK
             tvStock.text = "Stok: ${product.stock}"
 
-            // Low stock warning
-            if (product.isLowStock) {
-                tvStock.setTextColor(ContextCompat.getColor(root.context, R.color.color_low_stock))
+            // LOW STOCK STATUS
+            val isLowStock = product.stock <= 5   // fallback aman
+
+            if (isLowStock) {
+                tvStock.setTextColor(
+                    ContextCompat.getColor(root.context, R.color.color_low_stock)
+                )
                 ivWarning.visibility = android.view.View.VISIBLE
             } else {
-                tvStock.setTextColor(ContextCompat.getColor(root.context, android.R.color.darker_gray))
+                tvStock.setTextColor(
+                    ContextCompat.getColor(root.context, android.R.color.darker_gray)
+                )
                 ivWarning.visibility = android.view.View.GONE
             }
 
+            // ACTIONS
             btnEdit.setOnClickListener { onEdit(product) }
             btnDelete.setOnClickListener { onDelete(product) }
             btnAddStock.setOnClickListener { onAddStock(product) }
@@ -59,15 +74,21 @@ class ProductAdapter(
 
     companion object {
         private val DIFF_CALLBACK = object : DiffUtil.ItemCallback<Product>() {
-            override fun areItemsTheSame(oldItem: Product, newItem: Product) =
-                oldItem.id == newItem.id
 
-            override fun areContentsTheSame(oldItem: Product, newItem: Product) =
-                oldItem == newItem
+            override fun areItemsTheSame(oldItem: Product, newItem: Product): Boolean {
+                return oldItem.id == newItem.id
+            }
+
+            override fun areContentsTheSame(oldItem: Product, newItem: Product): Boolean {
+                return oldItem == newItem
+            }
         }
     }
 }
 
+/**
+ * FORMAT RUPIAH
+ */
 fun Long.toRupiah(): String {
     val format = NumberFormat.getCurrencyInstance(Locale("id", "ID"))
     return format.format(this).replace(",00", "")

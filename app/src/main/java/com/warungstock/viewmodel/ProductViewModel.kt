@@ -11,13 +11,13 @@ import kotlinx.coroutines.launch
 
 class ProductViewModel(application: Application) : AndroidViewModel(application) {
 
+    private val db by lazy { AppDatabase.getDatabase(getApplication()) }
+
     private val repository: ProductRepository by lazy {
-        val db = AppDatabase.getDatabase(getApplication())
         ProductRepository(db.productDao())
     }
 
     private val transactionRepo: TransactionRepository by lazy {
-        val db = AppDatabase.getDatabase(getApplication())
         TransactionRepository(db.stockTransactionDao())
     }
 
@@ -32,8 +32,12 @@ class ProductViewModel(application: Application) : AndroidViewModel(application)
     val lowStockProducts: LiveData<List<Product>> by lazy { repository.getLowStockProducts() }
 
     private val filterParams = MediatorLiveData<Pair<String, String>>().apply {
-        addSource(_searchQuery) { q -> value = Pair(q ?: "", _selectedCategory.value ?: "Semua") }
-        addSource(_selectedCategory) { c -> value = Pair(_searchQuery.value ?: "", c ?: "Semua") }
+        addSource(_searchQuery) { q ->
+            value = Pair(q ?: "", _selectedCategory.value ?: "Semua")
+        }
+        addSource(_selectedCategory) { c ->
+            value = Pair(_searchQuery.value ?: "", c ?: "Semua")
+        }
     }
 
     val products: LiveData<List<Product>> = filterParams.switchMap { (query, category) ->
@@ -45,31 +49,48 @@ class ProductViewModel(application: Application) : AndroidViewModel(application)
         _selectedCategory.value = "Semua"
     }
 
-    // ─── FILTER ──────────────────────────────────────────────────────────
-    fun setSearchQuery(query: String) { _searchQuery.value = query }
-    fun setCategory(category: String) { _selectedCategory.value = category }
+    // ─── FILTER ─────────────────────────────
+    fun setSearchQuery(query: String) {
+        _searchQuery.value = query
+    }
 
-    // ─── CRUD ────────────────────────────────────────────────────────────
+    fun setCategory(category: String) {
+        _selectedCategory.value = category
+    }
+
+    // ─── CRUD ───────────────────────────────
     fun addProduct(product: Product) = viewModelScope.launch {
-        try { repository.insert(product); _operationResult.value = Result.success(Unit) }
-        catch (e: Exception) { _operationResult.value = Result.failure(e) }
+        try {
+            repository.insert(product)
+            _operationResult.value = Result.success(Unit)
+        } catch (e: Exception) {
+            _operationResult.value = Result.failure(e)
+        }
     }
 
     fun updateProduct(product: Product) = viewModelScope.launch {
-        try { repository.update(product); _operationResult.value = Result.success(Unit) }
-        catch (e: Exception) { _operationResult.value = Result.failure(e) }
+        try {
+            repository.update(product)
+            _operationResult.value = Result.success(Unit)
+        } catch (e: Exception) {
+            _operationResult.value = Result.failure(e)
+        }
     }
 
     fun deleteProduct(product: Product) = viewModelScope.launch {
-        try { repository.delete(product); _operationResult.value = Result.success(Unit) }
-        catch (e: Exception) { _operationResult.value = Result.failure(e) }
+        try {
+            repository.delete(product)
+            _operationResult.value = Result.success(Unit)
+        } catch (e: Exception) {
+            _operationResult.value = Result.failure(e)
+        }
     }
 
-    // ─── STOCK + TRANSACTION RECORDING ───────────────────────────────────
+    // ─── STOCK + TRANSACTION ─────────────────────────────
 
     fun addStock(product: Product, amount: Int, note: String = "") = viewModelScope.launch {
         repository.addStock(product.id, amount)
-        // Catat transaksi MASUK
+
         transactionRepo.recordTransaction(
             StockTransaction(
                 productId = product.id,
@@ -79,7 +100,6 @@ class ProductViewModel(application: Application) : AndroidViewModel(application)
                 quantity = amount,
                 unitPrice = product.buyPrice,
                 totalValue = product.buyPrice * amount,
-                satuan = product.satuan,
                 note = note
             )
         )
@@ -87,7 +107,7 @@ class ProductViewModel(application: Application) : AndroidViewModel(application)
 
     fun reduceStock(product: Product, amount: Int, note: String = "") = viewModelScope.launch {
         repository.reduceStock(product.id, amount)
-        // Catat transaksi KELUAR
+
         transactionRepo.recordTransaction(
             StockTransaction(
                 productId = product.id,
@@ -97,13 +117,13 @@ class ProductViewModel(application: Application) : AndroidViewModel(application)
                 quantity = amount,
                 unitPrice = product.sellPrice,
                 totalValue = product.sellPrice * amount,
-                satuan = product.satuan,
                 note = note
             )
         )
     }
 
-    // Backward compat overloads (pakai id saja, tanpa transaction recording)
+    // ─── OVERLOAD (ID ONLY) ─────────────────────────────
+
     fun addStock(productId: Long, amount: Int) = viewModelScope.launch {
         repository.addStock(productId, amount)
     }
@@ -112,7 +132,7 @@ class ProductViewModel(application: Application) : AndroidViewModel(application)
         repository.reduceStock(productId, amount)
     }
 
-    // ─── REPORT GENERATION ───────────────────────────────────────────────
+    // ─── REPORT ─────────────────────────────
 
     data class ReportData(
         val transactions: List<StockTransaction>,
@@ -131,8 +151,11 @@ class ProductViewModel(application: Application) : AndroidViewModel(application)
         return ReportData(transactions, summary)
     }
 
-    // ─── IMPORT / EXPORT (existing) ──────────────────────────────────────
-    suspend fun exportProducts(): List<Product> = repository.getAllProductsOnce()
+    // ─── IMPORT / EXPORT ─────────────────────────────
+
+    suspend fun exportProducts(): List<Product> {
+        return repository.getAllProductsOnce()
+    }
 
     fun importProducts(products: List<Product>) = viewModelScope.launch {
         repository.insertAll(products)
