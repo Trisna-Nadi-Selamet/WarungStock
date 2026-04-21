@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="color_primary">#1976D2</color>
+    <color name="color_primary_variant">#1565C0</color>
+    <color name="color_secondary">#26A69A</color>
+    <color name="color_low_stock">#E53935</color>
+    <color name="color_low_stock_bg">#FFEBEE</color>
+    <color name="color_delete">#D32F2F</color>
+    <color name="color_profit">#388E3C</color>
+</resources>

@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">WarungStock</string>
+    <string name="action_export">Export JSON</string>
+    <string name="action_import">Import JSON</string>
+    <string name="low_stock_warning">Stok Hampir Habis</string>
+    <string name="add_product">Tambah Barang</string>
+    <string name="edit_product">Edit Barang</string>
+    <string name="search_hint">Cari barang…</string>
+</resources>
