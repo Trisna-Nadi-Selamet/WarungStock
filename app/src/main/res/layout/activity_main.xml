@@ -2,158 +2,165 @@
 <androidx.coordinatorlayout.widget.CoordinatorLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:background="#F6EFEA"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:background="?attr/colorSurface">
+    android:layout_height="match_parent">
 
-    <com.google.android.material.appbar.AppBarLayout
-        android:id="@+id/appBarLayout"
+    <!-- TOOLBAR -->
+    <com.google.android.material.appbar.MaterialToolbar
+        android:id="@+id/toolbar"
+        android:background="@android:color/transparent"
+        android:title="Inventaris"
+        android:titleTextColor="@android:color/black"
+        app:titleTextAppearance="@style/TextAppearance.Material3.TitleLarge"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        app:elevation="4dp">
+        android:layout_height="wrap_content"/>
 
-        <com.google.android.material.appbar.MaterialToolbar
-            android:id="@+id/toolbar"
-            android:layout_width="match_parent"
-            android:layout_height="?attr/actionBarSize"
-            app:title="WarungStock" />
-
-        <androidx.appcompat.widget.SearchView
-            android:id="@+id/searchView"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:background="?attr/colorSurface"
-            android:paddingHorizontal="8dp"
-            app:iconifiedByDefault="false"
-            app:queryHint="Cari barang..." />
-
-        <HorizontalScrollView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:scrollbars="none"
-            android:paddingVertical="4dp">
-
-            <com.google.android.material.chip.ChipGroup
-                android:id="@+id/chipGroupCategory"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:paddingHorizontal="12dp"
-                app:singleSelection="true" />
-        </HorizontalScrollView>
-
-    </com.google.android.material.appbar.AppBarLayout>
-
-    <androidx.constraintlayout.widget.ConstraintLayout
+    <!-- CONTENT -->
+    <LinearLayout
+        android:orientation="vertical"
+        android:padding="16dp"
+        android:layout_marginTop="56dp"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        app:layout_behavior="@string/appbar_scrolling_view_behavior">
+        android:layout_height="match_parent">
 
-        <!-- DASHBOARD (FIX UNTUK ERROR KOTLIN KAMU) -->
+        <!-- SUMMARY CARD -->
         <LinearLayout
-            android:id="@+id/dashboardContainer"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:orientation="vertical"
-            android:padding="12dp"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintEnd_toEndOf="parent">
+            android:orientation="horizontal"
+            android:weightSum="3"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
 
-            <TextView
-                android:id="@+id/tvTotalBarang"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Total Barang: 0" />
+            <!-- TOTAL -->
+            <com.google.android.material.card.MaterialCardView
+                android:layout_weight="1"
+                android:layout_margin="4dp"
+                app:cardCornerRadius="16dp"
+                android:layout_width="0dp"
+                android:layout_height="100dp">
 
-            <TextView
-                android:id="@+id/tvStokRendah"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Stok Rendah: 0" />
+                <LinearLayout
+                    android:gravity="center"
+                    android:orientation="vertical"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent">
 
-            <TextView
-                android:id="@+id/tvStokHabis"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Stok Habis: 0" />
+                    <TextView
+                        android:id="@+id/tvTotalBarang"
+                        android:text="0"
+                        android:textStyle="bold"
+                        android:textSize="18sp"/>
 
-            <TextView
-                android:id="@+id/tvTotalModal"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Total Modal: 0" />
+                    <TextView android:text="Total Barang"/>
+                </LinearLayout>
+            </com.google.android.material.card.MaterialCardView>
 
-            <TextView
-                android:id="@+id/tvTotalNilaiJual"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Total Nilai Jual: 0" />
+            <!-- STOK RENDAH -->
+            <com.google.android.material.card.MaterialCardView
+                android:layout_weight="1"
+                android:layout_margin="4dp"
+                app:cardCornerRadius="16dp"
+                android:layout_width="0dp"
+                android:layout_height="100dp">
 
+                <LinearLayout
+                    android:gravity="center"
+                    android:orientation="vertical"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent">
+
+                    <TextView
+                        android:id="@+id/tvStokRendah"
+                        android:text="0"
+                        android:textColor="#FFA000"
+                        android:textStyle="bold"/>
+
+                    <TextView android:text="Stok Rendah"/>
+                </LinearLayout>
+            </com.google.android.material.card.MaterialCardView>
+
+            <!-- STOK HABIS -->
+            <com.google.android.material.card.MaterialCardView
+                android:layout_weight="1"
+                android:layout_margin="4dp"
+                app:cardCornerRadius="16dp"
+                android:layout_width="0dp"
+                android:layout_height="100dp">
+
+                <LinearLayout
+                    android:gravity="center"
+                    android:orientation="vertical"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent">
+
+                    <TextView
+                        android:id="@+id/tvStokHabis"
+                        android:text="0"
+                        android:textColor="#D32F2F"
+                        android:textStyle="bold"/>
+
+                    <TextView android:text="Stok Habis"/>
+                </LinearLayout>
+            </com.google.android.material.card.MaterialCardView>
         </LinearLayout>
 
-        <!-- Low stock banner -->
-        <LinearLayout
-            android:id="@+id/bannerLowStock"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:background="@color/color_low_stock_bg"
-            android:orientation="horizontal"
-            android:padding="10dp"
-            android:gravity="center_vertical"
-            android:visibility="gone"
-            app:layout_constraintTop_toBottomOf="@id/dashboardContainer"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintEnd_toEndOf="parent">
+        <!-- SEARCH -->
+        <androidx.appcompat.widget.SearchView
+            android:id="@+id/searchView"
+            android:queryHint="Cari barang..."
+            android:layout_marginTop="12dp"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"/>
 
-            <ImageView
-                android:layout_width="20dp"
-                android:layout_height="20dp"
-                android:src="@drawable/ic_warning"
-                android:tint="@color/color_low_stock" />
+        <!-- CATEGORY -->
+        <com.google.android.material.chip.ChipGroup
+            android:id="@+id/chipGroupCategory"
+            app:singleSelection="true"
+            android:layout_marginTop="8dp"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"/>
+
+        <!-- LOW STOCK BANNER -->
+        <com.google.android.material.card.MaterialCardView
+            android:id="@+id/bannerLowStock"
+            android:visibility="gone"
+            android:layout_marginTop="8dp"
+            app:cardBackgroundColor="#FFF3E0"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
 
             <TextView
                 android:id="@+id/tvLowStockInfo"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="8dp"
-                android:textColor="@color/color_low_stock"
-                android:textSize="13sp"
-                android:fontFamily="sans-serif-medium" />
-        </LinearLayout>
+                android:padding="12dp"
+                android:text="0 barang hampir habis"/>
+        </com.google.android.material.card.MaterialCardView>
 
+        <!-- LIST -->
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/recyclerView"
-            android:layout_width="0dp"
+            android:layout_marginTop="8dp"
+            android:layout_width="match_parent"
             android:layout_height="0dp"
-            android:clipToPadding="false"
-            android:paddingBottom="80dp"
-            app:layout_constraintTop_toBottomOf="@id/bannerLowStock"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintEnd_toEndOf="parent" />
+            android:layout_weight="1"/>
 
+        <!-- EMPTY -->
         <TextView
             android:id="@+id/tvEmpty"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Belum ada barang.\nTambah barang dengan tombol +"
-            android:textAlignment="center"
-            android:textColor="?attr/colorOnSurfaceVariant"
+            android:text="Belum ada barang"
+            android:gravity="center"
             android:visibility="gone"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintEnd_toEndOf="parent" />
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"/>
+    </LinearLayout>
 
-    </androidx.constraintlayout.widget.ConstraintLayout>
-
+    <!-- FAB -->
     <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/fabAdd"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:src="@android:drawable/ic_input_add"
+        app:backgroundTint="#FF6B35"
         android:layout_gravity="bottom|end"
         android:layout_margin="16dp"
-        android:contentDescription="Tambah Barang"
-        app:srcCompat="@drawable/ic_add" />
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"/>
 
 </androidx.coordinatorlayout.widget.CoordinatorLayout>
