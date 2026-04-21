@@ -9,29 +9,32 @@ import kotlinx.coroutines.launch
 
 class ProductViewModel(application: Application) : AndroidViewModel(application) {
 
-    private val repository: ProductRepository
+    // ✅ FIX: repository pakai lazy biar tidak error initialization
+    private val repository: ProductRepository by lazy {
+        val db = AppDatabase.getDatabase(getApplication())
+        ProductRepository(db.productDao())
+    }
+
     private val _searchQuery = MutableLiveData("")
     private val _selectedCategory = MutableLiveData("Semua")
 
-    val allProducts: LiveData<List<Product>>
-    val categories: LiveData<List<String>>
-    val lowStockProducts: LiveData<List<Product>>
+    private val _operationResult = MutableLiveData<Result<Unit>>()
+    val operationResult: LiveData<Result<Unit>> = _operationResult
 
-    // Combined filter result
-    val filteredProducts: LiveData<List<Product>> = MediatorLiveData<List<Product>>().apply {
-        var lastQuery = ""
-        var lastCategory = "Semua"
-
-        addSource(_searchQuery) { query ->
-            lastQuery = query ?: ""
-            value = null // trigger refresh via repository
-        }
-        addSource(_selectedCategory) { category ->
-            lastCategory = category ?: "Semua"
-        }
+    // ✅ LiveData dari repository
+    val allProducts: LiveData<List<Product>> by lazy {
+        repository.getAllProducts()
     }
 
-    // We use switchMap for reactive filtering
+    val categories: LiveData<List<String>> by lazy {
+        repository.getAllCategories()
+    }
+
+    val lowStockProducts: LiveData<List<Product>> by lazy {
+        repository.getLowStockProducts()
+    }
+
+    // Filter trigger
     private val filterParams = MediatorLiveData<Pair<String, String>>().apply {
         addSource(_searchQuery) { q ->
             value = Pair(q ?: "", _selectedCategory.value ?: "Semua")
@@ -41,24 +44,19 @@ class ProductViewModel(application: Application) : AndroidViewModel(application)
         }
     }
 
+    // Filtered products
     val products: LiveData<List<Product>> = filterParams.switchMap { (query, category) ->
         repository.searchAndFilter(query, category)
     }
 
-    private val _operationResult = MutableLiveData<Result<Unit>>()
-    val operationResult: LiveData<Result<Unit>> = _operationResult
-
     init {
-        val db = AppDatabase.getDatabase(application)
-        repository = ProductRepository(db.productDao())
-        allProducts = repository.getAllProducts()
-        categories = repository.getAllCategories()
-        lowStockProducts = repository.getLowStockProducts()
-
-        // Init filter params
         _searchQuery.value = ""
         _selectedCategory.value = "Semua"
     }
+
+    // ======================
+    // FILTER FUNCTIONS
+    // ======================
 
     fun setSearchQuery(query: String) {
         _searchQuery.value = query
@@ -67,6 +65,10 @@ class ProductViewModel(application: Application) : AndroidViewModel(application)
     fun setCategory(category: String) {
         _selectedCategory.value = category
     }
+
+    // ======================
+    // CRUD OPERATIONS
+    // ======================
 
     fun addProduct(product: Product) = viewModelScope.launch {
         try {
@@ -95,6 +97,10 @@ class ProductViewModel(application: Application) : AndroidViewModel(application)
         }
     }
 
+    // ======================
+    // STOCK
+    // ======================
+
     fun addStock(productId: Long, amount: Int) = viewModelScope.launch {
         repository.addStock(productId, amount)
     }
@@ -103,7 +109,13 @@ class ProductViewModel(application: Application) : AndroidViewModel(application)
         repository.reduceStock(productId, amount)
     }
 
-    suspend fun exportProducts(): List<Product> = repository.getAllProductsOnce()
+    // ======================
+    // IMPORT / EXPORT
+    // ======================
+
+    suspend fun exportProducts(): List<Product> {
+        return repository.getAllProductsOnce()
+    }
 
     fun importProducts(products: List<Product>) = viewModelScope.launch {
         repository.insertAll(products)
