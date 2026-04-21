@@ -9,17 +9,17 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
 
-        <!-- TITLE -->
+        <!-- HEADER -->
         <TextView
             android:text="WARUNGSTOCK"
             android:textColor="#FF6B35"
-            android:textSize="12sp"/>
+            android:textSize="12sp" />
 
         <TextView
             android:text="Pengaturan"
             android:textStyle="bold"
             android:textSize="22sp"
-            android:layout_marginBottom="16dp"/>
+            android:layout_marginBottom="16dp" />
 
         <!-- MODE GELAP -->
         <LinearLayout
@@ -31,9 +31,9 @@
             android:layout_height="wrap_content">
 
             <ImageView
-                android:src="@drawable/ic_moon"
+                android:src="@android:drawable/ic_menu_day"
                 android:layout_width="40dp"
-                android:layout_height="40dp"/>
+                android:layout_height="40dp" />
 
             <LinearLayout
                 android:layout_weight="1"
@@ -45,18 +45,18 @@
                 <TextView
                     android:text="Mode Gelap"
                     android:textStyle="bold"
-                    android:textSize="16sp"/>
+                    android:textSize="16sp" />
 
                 <TextView
-                    android:text="Nonaktif"
+                    android:text="Aktifkan tema gelap"
                     android:textColor="#777"
-                    android:textSize="12sp"/>
+                    android:textSize="12sp" />
             </LinearLayout>
 
-            <Switch
+            <androidx.appcompat.widget.SwitchCompat
                 android:id="@+id/switchDark"
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content"/>
+                android:layout_height="wrap_content" />
         </LinearLayout>
 
         <!-- RINGKASAN DATA -->
@@ -65,7 +65,7 @@
             android:textSize="12sp"
             android:textColor="#888"
             android:layout_marginTop="20dp"
-            android:layout_marginBottom="8dp"/>
+            android:layout_marginBottom="8dp" />
 
         <LinearLayout
             android:background="@drawable/bg_card_soft"
@@ -73,12 +73,68 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
 
-            <!-- ITEM -->
-            <include layout="@layout/item_summary"/>
-            <include layout="@layout/item_summary"/>
-            <include layout="@layout/item_summary"/>
-            <include layout="@layout/item_summary"/>
-            <include layout="@layout/item_summary"/>
+            <!-- Total Barang -->
+            <LinearLayout
+                android:padding="14dp"
+                android:orientation="horizontal"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+                <TextView
+                    android:layout_weight="1"
+                    android:text="Total Barang"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content" />
+
+                <TextView
+                    android:id="@+id/tvTotalBarang"
+                    android:text="0"
+                    android:textStyle="bold"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content" />
+            </LinearLayout>
+
+            <!-- Total Stok -->
+            <LinearLayout
+                android:padding="14dp"
+                android:orientation="horizontal"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+                <TextView
+                    android:layout_weight="1"
+                    android:text="Total Stok"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content" />
+
+                <TextView
+                    android:id="@+id/tvTotalStok"
+                    android:text="0"
+                    android:textStyle="bold"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content" />
+            </LinearLayout>
+
+            <!-- Nilai Stok -->
+            <LinearLayout
+                android:padding="14dp"
+                android:orientation="horizontal"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+                <TextView
+                    android:layout_weight="1"
+                    android:text="Nilai Stok"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content" />
+
+                <TextView
+                    android:id="@+id/tvNilaiStok"
+                    android:text="Rp 0"
+                    android:textStyle="bold"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content" />
+            </LinearLayout>
 
         </LinearLayout>
 
@@ -88,7 +144,7 @@
             android:textSize="12sp"
             android:textColor="#888"
             android:layout_marginTop="20dp"
-            android:layout_marginBottom="8dp"/>
+            android:layout_marginBottom="8dp" />
 
         <LinearLayout
             android:background="@drawable/bg_card"
@@ -96,8 +152,71 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
 
-            <include layout="@layout/item_menu"/>
-            <include layout="@layout/item_menu"/>
+            <!-- EXPORT JSON -->
+            <LinearLayout
+                android:id="@+id/btnExport"
+                android:padding="16dp"
+                android:orientation="horizontal"
+                android:gravity="center_vertical"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+                <ImageView
+                    android:src="@android:drawable/ic_menu_upload"
+                    android:layout_width="36dp"
+                    android:layout_height="36dp" />
+
+                <LinearLayout
+                    android:layout_weight="1"
+                    android:layout_marginStart="12dp"
+                    android:orientation="vertical"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content">
+
+                    <TextView
+                        android:text="Ekspor JSON"
+                        android:textStyle="bold" />
+
+                    <TextView
+                        android:text="Simpan data ke file"
+                        android:textSize="12sp"
+                        android:textColor="#777" />
+                </LinearLayout>
+
+            </LinearLayout>
+
+            <!-- IMPORT JSON -->
+            <LinearLayout
+                android:id="@+id/btnImport"
+                android:padding="16dp"
+                android:orientation="horizontal"
+                android:gravity="center_vertical"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+                <ImageView
+                    android:src="@android:drawable/ic_menu_save"
+                    android:layout_width="36dp"
+                    android:layout_height="36dp" />
+
+                <LinearLayout
+                    android:layout_weight="1"
+                    android:layout_marginStart="12dp"
+                    android:orientation="vertical"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content">
+
+                    <TextView
+                        android:text="Import JSON"
+                        android:textStyle="bold" />
+
+                    <TextView
+                        android:text="Muat data dari file"
+                        android:textSize="12sp"
+                        android:textColor="#777" />
+                </LinearLayout>
+
+            </LinearLayout>
 
         </LinearLayout>
 

@@ -8,7 +8,6 @@ import android.os.Bundle
 import android.provider.MediaStore
 import android.view.Menu
 import android.view.MenuItem
-import android.view.View
 import android.widget.RadioButton
 import android.widget.TextView
 import android.widget.Toast
@@ -27,11 +26,11 @@ import com.warungstock.data.local.entity.Product
 import com.warungstock.databinding.ActivityMainBinding
 import com.warungstock.ui.product.AddEditProductActivity
 import com.warungstock.ui.product.ProductAdapter
+import com.warungstock.ui.settings.SettingsActivity // ✅ TAMBAHAN
 import com.warungstock.utils.JsonUtils
 import com.warungstock.utils.ReportUtils
 import com.warungstock.viewmodel.ProductViewModel
 import kotlinx.coroutines.launch
-import java.util.Calendar
 
 class MainActivity : AppCompatActivity() {
 
@@ -40,8 +39,8 @@ class MainActivity : AppCompatActivity() {
     private lateinit var adapter: ProductAdapter
 
     private val addProductLauncher =
-        registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
-            if (result.resultCode == Activity.RESULT_OK) {
+        registerForActivityResult(ActivityResultContracts.StartActivityForResult()) {
+            if (it.resultCode == Activity.RESULT_OK) {
                 Toast.makeText(this, "Barang berhasil disimpan", Toast.LENGTH_SHORT).show()
             }
         }
@@ -53,6 +52,7 @@ class MainActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
@@ -64,25 +64,29 @@ class MainActivity : AppCompatActivity() {
         observeData()
     }
 
+    // =========================
+    // UI SETUP
+    // =========================
+
     private fun setupRecyclerView() {
         adapter = ProductAdapter(
-            onEdit = { product ->
+            onEdit = {
                 val intent = Intent(this, AddEditProductActivity::class.java)
-                intent.putExtra(AddEditProductActivity.EXTRA_PRODUCT_ID, product.id)
+                intent.putExtra(AddEditProductActivity.EXTRA_PRODUCT_ID, it.id)
                 addProductLauncher.launch(intent)
             },
-            onDelete = { product ->
+            onDelete = {
                 MaterialAlertDialogBuilder(this)
                     .setTitle("Hapus Barang")
-                    .setMessage("Hapus ${product.name}?")
+                    .setMessage("Hapus ${it.name}?")
                     .setPositiveButton("Hapus") { _, _ ->
-                        viewModel.deleteProduct(product)
+                        viewModel.deleteProduct(it)
                     }
                     .setNegativeButton("Batal", null)
                     .show()
             },
-            onAddStock = { product -> showStockDialog(product, true) },
-            onReduceStock = { product -> showStockDialog(product, false) }
+            onAddStock = { showStockDialog(it, true) },
+            onReduceStock = { showStockDialog(it, false) }
         )
 
         binding.recyclerView.apply {
@@ -108,26 +112,26 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
+    // =========================
+    // OBSERVER
+    // =========================
+
     private fun observeData() {
 
-        viewModel.products.observe(this) { products ->
-            adapter.submitList(products)
-            binding.tvEmpty.isVisible = products.isEmpty()
-            binding.recyclerView.isVisible = products.isNotEmpty()
+        viewModel.products.observe(this) {
+            adapter.submitList(it)
+            binding.tvEmpty.isVisible = it.isEmpty()
+            binding.recyclerView.isVisible = it.isNotEmpty()
         }
 
         viewModel.allProducts.observe(this) { all ->
 
             binding.tvTotalBarang.text = all.size.toString()
+            binding.tvStokRendah.text = all.count { it.stock in 1..5 }.toString()
+            binding.tvStokHabis.text = all.count { it.stock <= 0 }.toString()
 
-            binding.tvStokRendah.text =
-                all.count { it.stock in 1..5 }.toString()
-
-            binding.tvStokHabis.text =
-                all.count { it.stock <= 0 }.toString()
-
-            val totalModal = all.sumOf { it.buyPrice * it.stock }
-            val totalJual = all.sumOf { it.sellPrice * it.stock }
+            val totalModal = all.fold(0L) { acc, p -> acc + (p.buyPrice * p.stock) }
+            val totalJual = all.fold(0L) { acc, p -> acc + (p.sellPrice * p.stock) }
 
             binding.tvTotalModal.text = ReportUtils.formatRupiah(totalModal)
             binding.tvTotalNilaiJual.text = ReportUtils.formatRupiah(totalJual)
@@ -137,10 +141,10 @@ class MainActivity : AppCompatActivity() {
             setupCategoryChips(it)
         }
 
-        viewModel.lowStockProducts.observe(this) { lowStock ->
-            binding.bannerLowStock.isVisible = lowStock.isNotEmpty()
-            if (lowStock.isNotEmpty()) {
-                binding.tvLowStockInfo.text = "${lowStock.size} barang hampir habis"
+        viewModel.lowStockProducts.observe(this) {
+            binding.bannerLowStock.isVisible = it.isNotEmpty()
+            if (it.isNotEmpty()) {
+                binding.tvLowStockInfo.text = "${it.size} barang hampir habis"
             }
         }
     }
@@ -163,46 +167,49 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
+    // =========================
+    // DIALOG FIX (ANTI BUG)
+    // =========================
+
     private fun showStockDialog(product: Product, isAdd: Boolean) {
 
         val view = layoutInflater.inflate(R.layout.dialog_stock_update, null)
-
         val etAmount = view.findViewById<TextInputEditText>(R.id.etAmount)
-        val tvSatuanInfo = view.findViewById<TextView>(R.id.tvSatuanInfo)
-        val tvIsiPerPak = view.findViewById<TextView>(R.id.tvIsiPerPak)
-        val rbBungkus = view.findViewById<RadioButton>(R.id.rbBungkus)
-
-        // FIX: tidak pakai satuan/isiPerPak dari model
-        val unit = "pcs"
-
-        tvSatuanInfo.text = "Satuan: $unit"
-        tvIsiPerPak.text = "1 pak = 1 $unit"
 
         val dialog = MaterialAlertDialogBuilder(this)
             .setTitle(if (isAdd) "Tambah Stok" else "Jual Barang")
             .setView(view)
-            .setPositiveButton("Simpan") { _, _ ->
-
-                val amount = etAmount.text.toString().toIntOrNull()
-
-                if (amount == null || amount <= 0) {
-                    Toast.makeText(this, "Jumlah tidak valid", Toast.LENGTH_SHORT).show()
-                    return@setPositiveButton
-                }
-
-                val finalAmount = amount // FIX: tidak pakai isiPerPak
-
-                if (isAdd) {
-                    viewModel.addStock(product, finalAmount)
-                } else {
-                    viewModel.reduceStock(product, finalAmount)
-                }
-            }
+            .setPositiveButton("Simpan", null)
             .setNegativeButton("Batal", null)
             .create()
 
+        dialog.setOnShowListener {
+            val btn = dialog.getButton(android.app.AlertDialog.BUTTON_POSITIVE)
+
+            btn.setOnClickListener {
+                val amount = etAmount.text.toString().toIntOrNull()
+
+                if (amount == null || amount <= 0) {
+                    etAmount.error = "Jumlah tidak valid"
+                    return@setOnClickListener
+                }
+
+                if (isAdd) {
+                    viewModel.addStock(product, amount)
+                } else {
+                    viewModel.reduceStock(product, amount)
+                }
+
+                dialog.dismiss()
+            }
+        }
+
         dialog.show()
     }
+
+    // =========================
+    // MENU
+    // =========================
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
         menuInflater.inflate(R.menu.main_menu, menu)
@@ -213,40 +220,57 @@ class MainActivity : AppCompatActivity() {
         return when (item.itemId) {
             R.id.action_export -> { exportJson(); true }
             R.id.action_import -> { importLauncher.launch("application/json"); true }
+            R.id.action_settings -> { // ✅ INI YANG NYAMBUNG KE SETTINGS
+                startActivity(Intent(this, SettingsActivity::class.java))
+                true
+            }
             else -> super.onOptionsItemSelected(item)
         }
     }
 
+    // =========================
+    // EXPORT / IMPORT FIX
+    // =========================
+
     private fun exportJson() {
         lifecycleScope.launch {
-            val products = viewModel.exportProducts()
-            val json = JsonUtils.toJson(products)
+            try {
+                val products = viewModel.exportProducts()
+                val json = JsonUtils.toJson(products)
 
-            val fileName = "warungstock_${System.currentTimeMillis()}.json"
-
-            val values = ContentValues().apply {
-                put(MediaStore.Downloads.DISPLAY_NAME, fileName)
-                put(MediaStore.Downloads.MIME_TYPE, "application/json")
-            }
-
-            val uri = contentResolver.insert(
-                MediaStore.Downloads.EXTERNAL_CONTENT_URI,
-                values
-            )
-
-            uri?.let {
-                contentResolver.openOutputStream(it)?.use { stream ->
-                    stream.write(json.toByteArray())
+                val values = ContentValues().apply {
+                    put(MediaStore.Downloads.DISPLAY_NAME, "warungstock.json")
+                    put(MediaStore.Downloads.MIME_TYPE, "application/json")
                 }
-                Toast.makeText(this@MainActivity, "Export berhasil", Toast.LENGTH_SHORT).show()
+
+                val uri = contentResolver.insert(
+                    MediaStore.Downloads.EXTERNAL_CONTENT_URI,
+                    values
+                )
+
+                uri?.let {
+                    contentResolver.openOutputStream(it)?.use { stream ->
+                        stream.write(json.toByteArray())
+                    }
+                    Toast.makeText(this@MainActivity, "Export berhasil", Toast.LENGTH_SHORT).show()
+                }
+
+            } catch (e: Exception) {
+                Toast.makeText(this@MainActivity, "Export gagal", Toast.LENGTH_SHORT).show()
             }
         }
     }
 
     private fun importJson(uri: Uri) {
-        val json = contentResolver.openInputStream(uri)?.bufferedReader()?.readText()
-        val products = json?.let { JsonUtils.fromJson(it) } ?: emptyList()
-        viewModel.importProducts(products)
-        Toast.makeText(this, "Import berhasil", Toast.LENGTH_SHORT).show()
+        try {
+            val json = contentResolver.openInputStream(uri)?.bufferedReader()?.readText()
+            val products = json?.let { JsonUtils.fromJson(it) } ?: emptyList()
+            viewModel.importProducts(products)
+
+            Toast.makeText(this, "Import berhasil", Toast.LENGTH_SHORT).show()
+
+        } catch (e: Exception) {
+            Toast.makeText(this, "File tidak valid", Toast.LENGTH_SHORT).show()
+        }
     }
 }
