@@ -1,12 +1,67 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:orientation="vertical"
     android:padding="20dp">
 
+    <!-- Info Satuan -->
+    <TextView
+        android:id="@+id/tvSatuanInfo"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="14dp"
+        android:text="Satuan: pcs"
+        android:textSize="13sp"
+        android:textColor="?attr/colorOnSurfaceVariant"
+        android:drawablePadding="6dp"/>
+
+    <!-- Jual: Eceran / Bungkus -->
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Jual Sebagai"
+        android:textSize="13sp"
+        android:textColor="?attr/colorOnSurface"
+        android:layout_marginBottom="6dp"/>
+
+    <RadioGroup
+        android:id="@+id/rgJualMode"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:layout_marginBottom="6dp">
+
+        <RadioButton
+            android:id="@+id/rbEceran"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="Eceran"
+            android:checked="true"/>
+
+        <RadioButton
+            android:id="@+id/rbBungkus"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="Bungkus / Pak"/>
+
+    </RadioGroup>
+
+    <!-- Keterangan isi per pak -->
+    <TextView
+        android:id="@+id/tvIsiPerPak"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="1 pak = ? pcs"
+        android:textSize="12sp"
+        android:textColor="?attr/colorPrimary"
+        android:visibility="gone"
+        android:layout_marginBottom="12dp"/>
+
+    <!-- Jumlah -->
     <com.google.android.material.textfield.TextInputLayout
         style="@style/Widget.Material3.TextInputLayout.OutlinedBox"
         android:layout_width="match_parent"
@@ -18,7 +73,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:inputType="number"
-            android:imeOptions="actionDone" />
+            android:imeOptions="actionDone"/>
 
     </com.google.android.material.textfield.TextInputLayout>
 
