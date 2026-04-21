@@ -6,33 +6,56 @@ import java.util.Calendar
 
 class TransactionRepository(private val dao: StockTransactionDao) {
 
-    suspend fun recordTransaction(transaction: StockTransaction) = dao.insert(transaction)
+    // ─── INSERT ─────────────────────────────────────────────
+    suspend fun recordTransaction(transaction: StockTransaction) =
+        dao.insert(transaction)
 
-    // ─── HARIAN ──────────────────────────────────────────────────────────
-    suspend fun getDailyTransactions(dateMillis: Long = System.currentTimeMillis()): List<StockTransaction> {
+    // ─── HARIAN ─────────────────────────────────────────────
+    suspend fun getDailyTransactions(
+        dateMillis: Long = System.currentTimeMillis()
+    ): List<StockTransaction> {
         val (start, end) = dayRange(dateMillis)
         return dao.getTransactionsForDay(start, end)
     }
 
-    fun getDailyTransactionsLive(dateMillis: Long = System.currentTimeMillis()) =
-        dao.getTransactionsForDayLive(*dayRange(dateMillis).toArray())
+    fun getDailyTransactionsLive(
+        dateMillis: Long = System.currentTimeMillis()
+    ) =
+        dao.getTransactionsForDayLive(
+            dayRange(dateMillis).first,
+            dayRange(dateMillis).second
+        )
 
-    // ─── BULANAN ─────────────────────────────────────────────────────────
-    suspend fun getMonthlyTransactions(year: Int, month: Int): List<StockTransaction> {
+    // ─── BULANAN ────────────────────────────────────────────
+    suspend fun getMonthlyTransactions(
+        year: Int,
+        month: Int
+    ): List<StockTransaction> {
         val (start, end) = monthRange(year, month)
         return dao.getTransactionsForMonth(start, end)
     }
 
-    fun getMonthlyTransactionsLive(year: Int, month: Int) =
-        dao.getTransactionsForMonthLive(*monthRange(year, month).toArray())
+    fun getMonthlyTransactionsLive(
+        year: Int,
+        month: Int
+    ) =
+        dao.getTransactionsForMonthLive(
+            monthRange(year, month).first,
+            monthRange(year, month).second
+        )
 
-    // ─── SUMMARY ─────────────────────────────────────────────────────────
-    suspend fun getDailySummary(dateMillis: Long = System.currentTimeMillis()): ReportSummary {
+    // ─── SUMMARY ────────────────────────────────────────────
+    suspend fun getDailySummary(
+        dateMillis: Long = System.currentTimeMillis()
+    ): ReportSummary {
         val (start, end) = dayRange(dateMillis)
         return buildSummary(start, end)
     }
 
-    suspend fun getMonthlySummary(year: Int, month: Int): ReportSummary {
+    suspend fun getMonthlySummary(
+        year: Int,
+        month: Int
+    ): ReportSummary {
         val (start, end) = monthRange(year, month)
         return buildSummary(start, end)
     }
@@ -43,26 +66,30 @@ class TransactionRepository(private val dao: StockTransactionDao) {
         val unitMasuk = dao.getTotalUnitMasuk(from, to)
         val unitKeluar = dao.getTotalUnitKeluar(from, to)
         val count = dao.getTransactionCount(from, to)
+
         return ReportSummary(
             totalNilaiMasuk = totalMasuk,
             totalNilaiKeluar = totalKeluar,
             totalUnitMasuk = unitMasuk,
             totalUnitKeluar = unitKeluar,
             totalTransaksi = count,
-            estimasiLaba = totalKeluar - (totalMasuk) // simplified
+            estimasiLaba = totalKeluar - totalMasuk
         )
     }
 
-    // ─── HELPERS ─────────────────────────────────────────────────────────
+    // ─── HELPERS ────────────────────────────────────────────
     private fun dayRange(millis: Long): Pair<Long, Long> {
-        val cal = Calendar.getInstance().apply { timeInMillis = millis }
-        cal.set(Calendar.HOUR_OF_DAY, 0)
-        cal.set(Calendar.MINUTE, 0)
-        cal.set(Calendar.SECOND, 0)
-        cal.set(Calendar.MILLISECOND, 0)
+        val cal = Calendar.getInstance().apply {
+            timeInMillis = millis
+            set(Calendar.HOUR_OF_DAY, 0)
+            set(Calendar.MINUTE, 0)
+            set(Calendar.SECOND, 0)
+            set(Calendar.MILLISECOND, 0)
+        }
+
         val start = cal.timeInMillis
         cal.add(Calendar.DAY_OF_MONTH, 1)
-        return Pair(start, cal.timeInMillis)
+        return start to cal.timeInMillis
     }
 
     private fun monthRange(year: Int, month: Int): Pair<Long, Long> {
@@ -75,11 +102,13 @@ class TransactionRepository(private val dao: StockTransactionDao) {
             set(Calendar.SECOND, 0)
             set(Calendar.MILLISECOND, 0)
         }
+
         val start = cal.timeInMillis
         cal.add(Calendar.MONTH, 1)
-        return Pair(start, cal.timeInMillis)
+        return start to cal.timeInMillis
     }
 
+    // ─── DATA CLASS ─────────────────────────────────────────
     data class ReportSummary(
         val totalNilaiMasuk: Long,
         val totalNilaiKeluar: Long,
@@ -89,5 +118,3 @@ class TransactionRepository(private val dao: StockTransactionDao) {
         val estimasiLaba: Long
     )
 }
-
-private fun Pair<Long, Long>.toArray() = longArrayOf(first, second)
