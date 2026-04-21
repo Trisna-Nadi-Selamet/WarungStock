@@ -29,6 +29,12 @@ class AddEditProductActivity : AppCompatActivity() {
         "Kebersihan", "Kesehatan", "Lainnya"
     )
 
+    // Pilihan satuan stok
+    private val satuanOptions = listOf(
+        "pcs", "kg", "gram", "liter", "ml", "lusin",
+        "pak", "karton", "botol", "kaleng", "bungkus", "sachet"
+    )
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityAddEditProductBinding.inflate(layoutInflater)
@@ -41,6 +47,7 @@ class AddEditProductActivity : AppCompatActivity() {
         supportActionBar?.title = if (productId == -1L) "Tambah Barang" else "Edit Barang"
 
         setupCategoryDropdown()
+        setupSatuanDropdown()
 
         if (productId != -1L) {
             loadProduct()
@@ -54,6 +61,12 @@ class AddEditProductActivity : AppCompatActivity() {
         binding.actvCategory.setAdapter(adapter)
     }
 
+    private fun setupSatuanDropdown() {
+        val adapter = ArrayAdapter(this, android.R.layout.simple_dropdown_item_1line, satuanOptions)
+        binding.actvSatuan.setAdapter(adapter)
+        // default "pcs" sudah diset di XML
+    }
+
     private fun loadProduct() {
         lifecycleScope.launch {
             val db = AppDatabase.getDatabase(applicationContext)
@@ -64,7 +77,12 @@ class AddEditProductActivity : AppCompatActivity() {
                     etName.setText(it.name)
                     etBuyPrice.setText(it.buyPrice.toString())
                     etSellPrice.setText(it.sellPrice.toString())
+                    // Tampilkan harga eceran jika ada
+                    if (it.sellPriceRetail > 0) {
+                        etSellPriceRetail.setText(it.sellPriceRetail.toString())
+                    }
                     etStock.setText(it.stock.toString())
+                    actvSatuan.setText(it.satuan, false)
                     actvCategory.setText(it.category, false)
                 }
             }
@@ -75,7 +93,9 @@ class AddEditProductActivity : AppCompatActivity() {
         val name = binding.etName.text.toString().trim()
         val buyPriceStr = binding.etBuyPrice.text.toString().trim()
         val sellPriceStr = binding.etSellPrice.text.toString().trim()
+        val sellPriceRetailStr = binding.etSellPriceRetail.text.toString().trim()
         val stockStr = binding.etStock.text.toString().trim()
+        val satuan = binding.actvSatuan.text.toString().trim().ifEmpty { "pcs" }
         val category = binding.actvCategory.text.toString().trim()
 
         // Validasi
@@ -96,6 +116,17 @@ class AddEditProductActivity : AppCompatActivity() {
             return
         } else binding.tilSellPrice.error = null
 
+        // Harga eceran opsional; jika kosong, default 0
+        val sellPriceRetail = if (sellPriceRetailStr.isEmpty()) 0L
+                              else sellPriceRetailStr.toLongOrNull() ?: run {
+                                  binding.tilSellPriceRetail.error = "Harga eceran tidak valid"
+                                  return
+                              }
+        if (sellPriceRetail < 0) {
+            binding.tilSellPriceRetail.error = "Harga eceran tidak boleh negatif"
+            return
+        } else binding.tilSellPriceRetail.error = null
+
         val stock = stockStr.toIntOrNull()
         if (stock == null || stock < 0) {
             binding.tilStock.error = "Stok tidak valid"
@@ -112,7 +143,9 @@ class AddEditProductActivity : AppCompatActivity() {
                 name = name,
                 buyPrice = buyPrice,
                 sellPrice = sellPrice,
+                sellPriceRetail = sellPriceRetail,
                 stock = stock,
+                satuan = satuan,
                 category = category,
                 updatedAt = System.currentTimeMillis()
             )
@@ -121,7 +154,9 @@ class AddEditProductActivity : AppCompatActivity() {
                 name = name,
                 buyPrice = buyPrice,
                 sellPrice = sellPrice,
+                sellPriceRetail = sellPriceRetail,
                 stock = stock,
+                satuan = satuan,
                 category = category
             )
         }

@@ -21,21 +21,32 @@ abstract class AppDatabase : RoomDatabase() {
     abstract fun stockTransactionDao(): StockTransactionDao
 
     companion object {
+
         @Volatile
         private var INSTANCE: AppDatabase? = null
 
-        // ─── MIGRATION 1 → 2: tambah field satuan, jualEceran, isiPerPak ───
+        // ─── MIGRATION 1 → 2 ───
         val MIGRATION_1_2 = object : Migration(1, 2) {
             override fun migrate(database: SupportSQLiteDatabase) {
-                database.execSQL("ALTER TABLE products ADD COLUMN satuan TEXT NOT NULL DEFAULT 'pcs'")
-                database.execSQL("ALTER TABLE products ADD COLUMN jualEceran INTEGER NOT NULL DEFAULT 1")
-                database.execSQL("ALTER TABLE products ADD COLUMN isiPerPak INTEGER NOT NULL DEFAULT 1")
+
+                database.execSQL(
+                    "ALTER TABLE products ADD COLUMN satuan TEXT NOT NULL DEFAULT 'pcs'"
+                )
+
+                database.execSQL(
+                    "ALTER TABLE products ADD COLUMN jualEceran INTEGER NOT NULL DEFAULT 1"
+                )
+
+                database.execSQL(
+                    "ALTER TABLE products ADD COLUMN isiPerPak INTEGER NOT NULL DEFAULT 1"
+                )
             }
         }
 
-        // ─── MIGRATION 2 → 3: tambah tabel stock_transactions ────────────
+        // ─── MIGRATION 2 → 3 ───
         val MIGRATION_2_3 = object : Migration(2, 3) {
             override fun migrate(database: SupportSQLiteDatabase) {
+
                 database.execSQL("""
                     CREATE TABLE IF NOT EXISTS stock_transactions (
                         id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
@@ -52,8 +63,14 @@ abstract class AppDatabase : RoomDatabase() {
                         FOREIGN KEY(productId) REFERENCES products(id) ON DELETE CASCADE
                     )
                 """.trimIndent())
-                database.execSQL("CREATE INDEX IF NOT EXISTS index_stock_transactions_productId ON stock_transactions(productId)")
-                database.execSQL("CREATE INDEX IF NOT EXISTS index_stock_transactions_timestamp ON stock_transactions(timestamp)")
+
+                database.execSQL(
+                    "CREATE INDEX IF NOT EXISTS index_stock_transactions_productId ON stock_transactions(productId)"
+                )
+
+                database.execSQL(
+                    "CREATE INDEX IF NOT EXISTS index_stock_transactions_timestamp ON stock_transactions(timestamp)"
+                )
             }
         }
 
@@ -66,6 +83,7 @@ abstract class AppDatabase : RoomDatabase() {
                 )
                     .addMigrations(MIGRATION_1_2, MIGRATION_2_3)
                     .build()
+
                 INSTANCE = instance
                 instance
             }

@@ -21,14 +21,15 @@ data class StockTransaction(
     @PrimaryKey(autoGenerate = true)
     val id: Long = 0,
     val productId: Long,
-    val productName: String,          // snapshot nama barang saat transaksi
-    val category: String,             // snapshot kategori
-    val type: TransactionType,        // MASUK / KELUAR
-    val quantity: Int,                // jumlah unit
-    val unitPrice: Long,              // harga per unit saat transaksi
-    val totalValue: Long,             // quantity * unitPrice
-    val satuan: String = "pcs",
-    val note: String = "",            // catatan opsional
+    val productName: String,      // snapshot nama barang saat transaksi
+    val category: String,         // snapshot kategori
+    val type: TransactionType,    // MASUK / KELUAR
+    val quantity: Int,            // jumlah unit
+    val unitPrice: Long,          // harga per unit saat transaksi (grosir/beli)
+    val retailPrice: Long = 0,    // harga jual eceran saat transaksi (BARU)
+    val totalValue: Long,         // quantity * unitPrice
+    val satuan: String = "pcs",   // satuan unit
+    val note: String = "",        // catatan opsional
     val timestamp: Long = System.currentTimeMillis()
 ) {
     enum class TransactionType {
