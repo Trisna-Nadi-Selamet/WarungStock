@@ -1,5 +1,5 @@
 package com.warungstock
-
+import com.warungstock.R
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
