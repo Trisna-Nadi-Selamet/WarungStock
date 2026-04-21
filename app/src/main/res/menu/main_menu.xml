@@ -22,5 +22,20 @@
         android:id="@+id/action_import"
         android:title="Import JSON"
         android:orderInCategory="11" />
+        <item
+        android:id="@+id/action_export"
+        android:title="Export"
+        app:showAsAction="never" />
+
+    <item
+        android:id="@+id/action_import"
+        android:title="Import"
+        app:showAsAction="never" />
+
+    <item
+        android:id="@+id/action_settings"
+        android:title="Pengaturan"
+        android:icon="@android:drawable/ic_menu_preferences"
+        app:showAsAction="never" />
 
 </menu>

@@ -1,0 +1,40 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/btnExport"
+    android:padding="16dp"
+    android:orientation="horizontal"
+    android:gravity="center_vertical"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+
+    <!-- ICON -->
+    <ImageView
+        android:src="@android:drawable/ic_menu_upload"
+        android:layout_width="36dp"
+        android:layout_height="36dp" />
+
+    <!-- TEXT -->
+    <LinearLayout
+        android:layout_weight="1"
+        android:layout_marginStart="12dp"
+        android:orientation="vertical"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content">
+
+        <TextView
+            android:text="Ekspor JSON"
+            android:textStyle="bold"
+            android:textSize="16sp" />
+
+        <TextView
+            android:text="Simpan data ke file"
+            android:textSize="12sp"
+            android:textColor="#777" />
+    </LinearLayout>
+
+    <!-- ARROW -->
+    <ImageView
+        android:src="@android:drawable/arrow_forward"
+        android:layout_width="16dp"
+        android:layout_height="16dp" />
+
+</LinearLayout>
