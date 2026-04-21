@@ -164,3 +164,43 @@
         android:layout_height="wrap_content"/>
 
 </androidx.coordinatorlayout.widget.CoordinatorLayout>
+
+<com.google.android.material.card.MaterialCardView
+    android:layout_marginTop="12dp"
+    app:cardCornerRadius="16dp"
+    app:cardElevation="4dp"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+
+    <LinearLayout
+        android:orientation="vertical"
+        android:padding="16dp"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <TextView
+            android:text="Total Modal"
+            android:textColor="#666"
+            android:textSize="14sp"/>
+
+        <TextView
+            android:id="@+id/tvTotalModal"
+            android:text="Rp 0"
+            android:textStyle="bold"
+            android:textSize="18sp"/>
+
+        <TextView
+            android:text="Total Nilai Jual"
+            android:layout_marginTop="8dp"
+            android:textColor="#666"
+            android:textSize="14sp"/>
+
+        <TextView
+            android:id="@+id/tvTotalNilaiJual"
+            android:text="Rp 0"
+            android:textStyle="bold"
+            android:textSize="18sp"/>
+
+    </LinearLayout>
+
+</com.google.android.material.card.MaterialCardView>
