@@ -1,0 +1,105 @@
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:background="#F4EEE9"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <LinearLayout
+        android:orientation="vertical"
+        android:padding="16dp"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <!-- TITLE -->
+        <TextView
+            android:text="WARUNGSTOCK"
+            android:textColor="#FF6B35"
+            android:textSize="12sp"/>
+
+        <TextView
+            android:text="Pengaturan"
+            android:textStyle="bold"
+            android:textSize="22sp"
+            android:layout_marginBottom="16dp"/>
+
+        <!-- MODE GELAP -->
+        <LinearLayout
+            android:background="@drawable/bg_card"
+            android:padding="16dp"
+            android:orientation="horizontal"
+            android:gravity="center_vertical"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <ImageView
+                android:src="@drawable/ic_moon"
+                android:layout_width="40dp"
+                android:layout_height="40dp"/>
+
+            <LinearLayout
+                android:layout_weight="1"
+                android:layout_marginStart="12dp"
+                android:orientation="vertical"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content">
+
+                <TextView
+                    android:text="Mode Gelap"
+                    android:textStyle="bold"
+                    android:textSize="16sp"/>
+
+                <TextView
+                    android:text="Nonaktif"
+                    android:textColor="#777"
+                    android:textSize="12sp"/>
+            </LinearLayout>
+
+            <Switch
+                android:id="@+id/switchDark"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"/>
+        </LinearLayout>
+
+        <!-- RINGKASAN DATA -->
+        <TextView
+            android:text="RINGKASAN DATA"
+            android:textSize="12sp"
+            android:textColor="#888"
+            android:layout_marginTop="20dp"
+            android:layout_marginBottom="8dp"/>
+
+        <LinearLayout
+            android:background="@drawable/bg_card_soft"
+            android:orientation="vertical"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <!-- ITEM -->
+            <include layout="@layout/item_summary"/>
+            <include layout="@layout/item_summary"/>
+            <include layout="@layout/item_summary"/>
+            <include layout="@layout/item_summary"/>
+            <include layout="@layout/item_summary"/>
+
+        </LinearLayout>
+
+        <!-- MANAJEMEN DATA -->
+        <TextView
+            android:text="MANAJEMEN DATA"
+            android:textSize="12sp"
+            android:textColor="#888"
+            android:layout_marginTop="20dp"
+            android:layout_marginBottom="8dp"/>
+
+        <LinearLayout
+            android:background="@drawable/bg_card"
+            android:orientation="vertical"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <include layout="@layout/item_menu"/>
+            <include layout="@layout/item_menu"/>
+
+        </LinearLayout>
+
+    </LinearLayout>
+</ScrollView>

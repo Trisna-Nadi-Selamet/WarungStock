@@ -1,0 +1,34 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:padding="16dp"
+    android:orientation="horizontal"
+    android:gravity="center_vertical"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+
+    <ImageView
+        android:src="@drawable/ic_upload"
+        android:layout_width="36dp"
+        android:layout_height="36dp"/>
+
+    <LinearLayout
+        android:layout_weight="1"
+        android:layout_marginStart="12dp"
+        android:orientation="vertical"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content">
+
+        <TextView
+            android:text="Ekspor JSON"
+            android:textStyle="bold"/>
+
+        <TextView
+            android:text="Ekspor data ke file JSON"
+            android:textSize="12sp"
+            android:textColor="#777"/>
+    </LinearLayout>
+
+    <ImageView
+        android:src="@drawable/ic_arrow"
+        android:layout_width="16dp"
+        android:layout_height="16dp"/>
+</LinearLayout>
