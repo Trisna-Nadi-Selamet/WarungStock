@@ -9,10 +9,9 @@
     <!-- TOOLBAR -->
     <com.google.android.material.appbar.MaterialToolbar
         android:id="@+id/toolbar"
-        android:background="@android:color/transparent"
         android:title="Inventaris"
         android:titleTextColor="@android:color/black"
-        app:titleTextAppearance="@style/TextAppearance.Material3.TitleLarge"
+        android:background="@android:color/transparent"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"/>
 
@@ -24,7 +23,7 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
-        <!-- SUMMARY CARD -->
+        <!-- SUMMARY -->
         <LinearLayout
             android:orientation="horizontal"
             android:weightSum="3"
@@ -36,6 +35,7 @@
                 android:layout_weight="1"
                 android:layout_margin="4dp"
                 app:cardCornerRadius="16dp"
+                app:cardElevation="6dp"
                 android:layout_width="0dp"
                 android:layout_height="100dp">
 
@@ -48,10 +48,11 @@
                     <TextView
                         android:id="@+id/tvTotalBarang"
                         android:text="0"
-                        android:textStyle="bold"
-                        android:textSize="18sp"/>
+                        android:textSize="18sp"
+                        android:textStyle="bold"/>
 
-                    <TextView android:text="Total Barang"/>
+                    <TextView
+                        android:text="Total Barang"/>
                 </LinearLayout>
             </com.google.android.material.card.MaterialCardView>
 
@@ -60,6 +61,7 @@
                 android:layout_weight="1"
                 android:layout_margin="4dp"
                 app:cardCornerRadius="16dp"
+                app:cardElevation="6dp"
                 android:layout_width="0dp"
                 android:layout_height="100dp">
 
@@ -75,7 +77,8 @@
                         android:textColor="#FFA000"
                         android:textStyle="bold"/>
 
-                    <TextView android:text="Stok Rendah"/>
+                    <TextView
+                        android:text="Stok Rendah"/>
                 </LinearLayout>
             </com.google.android.material.card.MaterialCardView>
 
@@ -84,6 +87,7 @@
                 android:layout_weight="1"
                 android:layout_margin="4dp"
                 app:cardCornerRadius="16dp"
+                app:cardElevation="6dp"
                 android:layout_width="0dp"
                 android:layout_height="100dp">
 
@@ -99,10 +103,50 @@
                         android:textColor="#D32F2F"
                         android:textStyle="bold"/>
 
-                    <TextView android:text="Stok Habis"/>
+                    <TextView
+                        android:text="Stok Habis"/>
                 </LinearLayout>
             </com.google.android.material.card.MaterialCardView>
         </LinearLayout>
+
+        <!-- CARD PROFIT -->
+        <com.google.android.material.card.MaterialCardView
+            android:layout_marginTop="12dp"
+            app:cardCornerRadius="16dp"
+            app:cardElevation="4dp"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <LinearLayout
+                android:orientation="vertical"
+                android:padding="16dp"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+                <TextView
+                    android:text="Total Modal"
+                    android:textColor="#666"
+                    android:textSize="14sp"/>
+
+                <TextView
+                    android:id="@+id/tvTotalModal"
+                    android:text="Rp 0"
+                    android:textStyle="bold"
+                    android:textSize="18sp"/>
+
+                <TextView
+                    android:text="Total Nilai Jual"
+                    android:layout_marginTop="8dp"
+                    android:textColor="#666"
+                    android:textSize="14sp"/>
+
+                <TextView
+                    android:id="@+id/tvTotalNilaiJual"
+                    android:text="Rp 0"
+                    android:textStyle="bold"
+                    android:textSize="18sp"/>
+            </LinearLayout>
+        </com.google.android.material.card.MaterialCardView>
 
         <!-- SEARCH -->
         <androidx.appcompat.widget.SearchView
@@ -120,7 +164,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"/>
 
-        <!-- LOW STOCK BANNER -->
+        <!-- LOW STOCK -->
         <com.google.android.material.card.MaterialCardView
             android:id="@+id/bannerLowStock"
             android:visibility="gone"
@@ -144,13 +188,23 @@
             android:layout_weight="1"/>
 
         <!-- EMPTY -->
-        <TextView
+        <LinearLayout
             android:id="@+id/tvEmpty"
-            android:text="Belum ada barang"
+            android:orientation="vertical"
             android:gravity="center"
             android:visibility="gone"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"/>
+            android:layout_height="wrap_content">
+
+            <TextView
+                android:text="Belum ada barang"
+                android:textStyle="bold"/>
+
+            <TextView
+                android:text="Tekan tombol + untuk mulai"
+                android:textColor="#888"/>
+        </LinearLayout>
+
     </LinearLayout>
 
     <!-- FAB -->
@@ -164,43 +218,3 @@
         android:layout_height="wrap_content"/>
 
 </androidx.coordinatorlayout.widget.CoordinatorLayout>
-
-<com.google.android.material.card.MaterialCardView
-    android:layout_marginTop="12dp"
-    app:cardCornerRadius="16dp"
-    app:cardElevation="4dp"
-    android:layout_width="match_parent"
-    android:layout_height="wrap_content">
-
-    <LinearLayout
-        android:orientation="vertical"
-        android:padding="16dp"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content">
-
-        <TextView
-            android:text="Total Modal"
-            android:textColor="#666"
-            android:textSize="14sp"/>
-
-        <TextView
-            android:id="@+id/tvTotalModal"
-            android:text="Rp 0"
-            android:textStyle="bold"
-            android:textSize="18sp"/>
-
-        <TextView
-            android:text="Total Nilai Jual"
-            android:layout_marginTop="8dp"
-            android:textColor="#666"
-            android:textSize="14sp"/>
-
-        <TextView
-            android:id="@+id/tvTotalNilaiJual"
-            android:text="Rp 0"
-            android:textStyle="bold"
-            android:textSize="18sp"/>
-
-    </LinearLayout>
-
-</com.google.android.material.card.MaterialCardView>
