@@ -1,28 +1,7 @@
-<?xml version="1.0" encoding="utf-8"?>
-<menu xmlns:android="http://schemas.android.com/apk/res/android">
-
-    <!-- Laporan -->
-    <item
-        android:id="@+id/action_report_daily"
-        android:title="📊 Laporan Harian"
-        android:orderInCategory="1" />
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <item
-        android:id="@+id/action_report_monthly"
-        android:title="📈 Laporan Bulanan"
-        android:orderInCategory="2" />
-
-    <!-- Divider visual via ordering -->
-    <item
-        android:id="@+id/action_export"
-        android:title="Export JSON"
-        android:orderInCategory="10" />
-
-    <item
-        android:id="@+id/action_import"
-        android:title="Import JSON"
-        android:orderInCategory="11" />
-        <item
         android:id="@+id/action_export"
         android:title="Export"
         app:showAsAction="never" />
